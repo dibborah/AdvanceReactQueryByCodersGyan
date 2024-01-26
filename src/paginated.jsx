@@ -64,6 +64,8 @@ function Products() {
         <div>
           <div className="relative mt-2 rounded-md flex items-center gap-8 mb-4">
             <input
+
+            // implementing debounce
               onChange={debounce((e) => {
                 setSearchParams((prev) => {
                   prev.set("q", e.target.value);
