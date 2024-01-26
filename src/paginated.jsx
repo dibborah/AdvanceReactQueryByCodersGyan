@@ -1,6 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
+import { useState } from 'react';
 
 function Products() {
+
+    const [ limit ] = useState(4);
+    const [ skip, setSkip ] = useState(0);
     const { data: categories } = useQuery({
         queryKey: ['categories'],
         queryFn: async () => {
@@ -11,15 +15,24 @@ function Products() {
     });
 
     const { data: products } = useQuery({
-        queryKey: ['products'],
+        queryKey: ['products', limit, skip],
         queryFn: async () => {
-            const data = await fetch('https://dummyjson.com/products').then((res) => res.json());
+            const data = await fetch(`https://dummyjson.com/products/?limit=${limit}&skip=${skip}`).then((res) => res.json());
             return data.products;
         },
     });
 
+    const handleMove = (moveCount) => {
+
+        // Next
+        // skip = 0 , moveCount = 4
+
+        setSkip ((skip)=> {
+            return Math.max((skip + moveCount),0);
+        })
+    }
+
     return (
-        <>
             <div className="bg-white">
                 <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
                     <div className="flex items-center justify-between">
@@ -84,18 +97,21 @@ function Products() {
                     <div className="flex gap-2 mt-12">
                         <button
                             className="bg-purple-500 px-4 py-1 text-white rounded"
-                            onClick={() => {}}>
+                            onClick={() => {
+                                handleMove(-limit)
+                            }}>
                             Prev
                         </button>
                         <button
                             className="bg-purple-500 px-4 py-1 text-white rounded"
-                            onClick={() => {}}>
+                            onClick={() => {
+                                handleMove(limit)
+                            }}>
                             Next
                         </button>
                     </div>
                 </div>
             </div>
-        </>
     );
 }
 

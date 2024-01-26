@@ -1,5 +1,5 @@
 import React from 'react';
-import { useQuery, useQueries } from '@tanstack/react-query';
+// import { useQuery, useQueries } from '@tanstack/react-query';
 
 const Parallel = () => {
     const [userIds, setUserIds] = React.useState([1]);
