@@ -10,8 +10,8 @@ function Products() {
 
   const skip = parseInt(searchParams.get("skip") || 0); // The parameters here skip and limit below are in string format in the URL
   const limit = parseInt(searchParams.get("limit") || 0); // So you have to convert the string format to number format
-
   const q = searchParams.get("q") || "";
+  const category = searchParams.get('category') || "";
 
   // const [ limit ] = useState(4);
   // const [ skip, setSkip ] = useState(0);
@@ -26,16 +26,19 @@ function Products() {
   });
 
   const { data: products } = useQuery({
-    queryKey: ["products", limit, skip, q],
+    queryKey: ["products", limit, skip, q, category],
 
     queryFn: async () => {
-      const data = await fetch(
-        `https://dummyjson.com/products/search?limit=${limit}&skip=${skip}&q=${q}`
-      ).then((res) => res.json());
+      let url = `https://dummyjson.com/products/search?limit=${limit}&skip=${skip}&q=${q}`
+      if(category){
+        url = `https://dummyjson.com/products/category/${category}?limit=${limit}&skip=${skip}`
+      }
+      const data = await fetch(url).then((res) => res.json());
       return data.products;
     },
 
     placeholderData: keepPreviousData,
+    staleTime: 20000,
   });
 
   const handleMove = (moveCount) => {
@@ -69,6 +72,7 @@ function Products() {
               onChange={debounce((e) => {
                 setSearchParams((prev) => {
                   prev.set("q", e.target.value);
+                  prev.delete("category");
                   prev.set("skip", 0);
                   return prev;
                 });
@@ -79,7 +83,14 @@ function Products() {
               className="block w-full rounded-md border-0 py-1.5 pl-7 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               placeholder="IPhone"
             />
-            <select className="border p-2" onChange={() => {}}>
+            <select className="border p-2" onChange={(e) => {
+              setSearchParams((prev)=>{
+                prev.set('skip', 0);
+                prev.delete('q');
+                prev.set('category', e.target.value);
+                return prev;
+              })
+            }}>
               <option>Select category</option>
               {categories?.map((category) => (
                 <option key={category} value={category}>
