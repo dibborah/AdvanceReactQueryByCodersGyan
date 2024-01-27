@@ -38,7 +38,7 @@ function Products() {
     },
 
     placeholderData: keepPreviousData,
-    staleTime: 20000,
+    staleTime: 20000,// 2 sec
   });
 
   const handleMove = (moveCount) => {
@@ -133,6 +133,7 @@ function Products() {
 
         <div className="flex gap-2 mt-12">
           <button
+            disabled={skip < limit}
             className="bg-purple-500 px-4 py-1 text-white rounded"
             onClick={() => {
               handleMove(-limit);
@@ -141,6 +142,7 @@ function Products() {
             Prev
           </button>
           <button
+            disabled={skip + limit >= 100}
             className="bg-purple-500 px-4 py-1 text-white rounded"
             onClick={() => {
               handleMove(limit);
