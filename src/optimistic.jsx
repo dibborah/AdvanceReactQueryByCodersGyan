@@ -63,6 +63,10 @@ const Optimistic = () => {
     mutate(post);
   };
 
+  const handleRetry = (post) => {
+    mutate(post);
+  }
+
   return (
     <div className="p-4 flex gap-12">
       <div className="flex-1">
@@ -89,7 +93,12 @@ const Optimistic = () => {
               {variables.title}
             </li>
           )}
-          {isError && <p className="text-red-500">Something went wrong</p>}
+          {isError && (
+            <li className="border p-2 mb-4 flex justify-between" key={variables.id}>
+              <span className="text-red-500">{variables.title}</span>
+              <button className="text-blue-500" onClick={() => handleRetry(variables)}>Retry</button>{/*Not using function callback inside onClick when handleRetry was passed an arguments breaks the entire flow of code . That was a big mistake . ### Be careful in the future */}
+            </li>
+          )}
 
           {posts?.map((post) => {
             return (
